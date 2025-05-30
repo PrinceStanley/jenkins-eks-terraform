@@ -130,21 +130,21 @@ spec:
 
     environment {
         // Terraform environment variables to pass to the Terraform run
-        TF_VAR_cluster_name = EKS_CLUSTER_NAME
-        TF_VAR_kubernetes_version = EKS_KUBERNETES_VERSION
-        TF_VAR_node_group_name = EKS_NODE_GROUP_NAME
-        TF_VAR_aws_region = AWS_REGION
-        TF_VAR_existing_vpc_id = EXISTING_VPC_ID
-        TF_VAR_existing_private_subnet_ids = EXISTING_PRIVATE_SUBNET_IDS
-        TF_VAR_existing_public_subnet_ids = EXISTING_PUBLIC_SUBNET_IDS
-        TF_VAR_existing_cluster_security_group_id = EXISTING_CLUSTER_SECURITY_GROUP_ID
-        TF_VAR_addon_coredns_version = params.COREDNS_ADDON_VERSION
-        TF_VAR_addon_kube_proxy_version = params.KUBE_PROXY_ADDON_VERSION
-        TF_VAR_addon_vpc_cni_version = params.VPC_CNI_ADDON_VERSION
-        TF_VAR_addon_ebs_csi_driver_version = params.EBS_CSI_DRIVER_ADDON_VERSION 
-        TF_VAR_addon_efs_csi_driver_version = params.EFS_CSI_DRIVER_VERSION
-        TF_VAR_node_group_launch_template_id = params.NODE_GROUP_LT_ID
-        TF_VAR_node_group_launch_template_version = params.NODE_GROUP_LT_VERSION
+        TF_VAR_cluster_name = ${EKS_CLUSTER_NAME}
+        TF_VAR_kubernetes_version = ${EKS_KUBERNETES_VERSION}
+        TF_VAR_node_group_name = ${EKS_NODE_GROUP_NAME}
+        TF_VAR_aws_region = ${AWS_REGION}
+        TF_VAR_existing_vpc_id = ${EXISTING_VPC_ID}
+        TF_VAR_existing_private_subnet_ids = ${EXISTING_PRIVATE_SUBNET_IDS}
+        TF_VAR_existing_public_subnet_ids = ${EXISTING_PUBLIC_SUBNET_IDS}
+        TF_VAR_existing_cluster_security_group_id = ${EXISTING_CLUSTER_SECURITY_GROUP_ID}
+        TF_VAR_addon_coredns_version = ${params.COREDNS_ADDON_VERSION}
+        TF_VAR_addon_kube_proxy_version = ${params.KUBE_PROXY_ADDON_VERSION}
+        TF_VAR_addon_vpc_cni_version = ${params.VPC_CNI_ADDON_VERSION}
+        TF_VAR_addon_ebs_csi_driver_version = ${params.EBS_CSI_DRIVER_ADDON_VERSION}
+        TF_VAR_addon_efs_csi_driver_version = ${params.EFS_CSI_DRIVER_VERSION}
+        TF_VAR_node_group_launch_template_id = ${params.NODE_GROUP_LT_ID}
+        TF_VAR_node_group_launch_template_version = ${params.NODE_GROUP_LT_VERSION}
     }
 
     stages {
