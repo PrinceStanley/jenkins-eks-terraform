@@ -177,9 +177,9 @@ spec:
         }
 
         stage('Plan') {
+            when { expression { "${params.ACTION}" != 'destroy' } } // Don't plan if destroying, destroy command does its own plan
             steps {
                 container('terraform') { // Run this step in the Terraform sidecar
-                    when { expression { params.ACTION != 'destroy' } } // Don't plan if destroying, destroy command does its own plan
                     script {
                         echo "Generating Terraform plan..."
                         sh "terraform plan -out=tfplan"
@@ -189,10 +189,10 @@ spec:
         }
 
         stage('Apply / Upgrade / Destroy') {
+            when { expression { "${params.ACTION}" == 'install' } }
             steps {
                 script { // Use a script block for conditional logic
                     // Install EKS Cluster
-                    when { expression { params.ACTION == 'install' } }
                     input message: "Proceed with EKS cluster installation for '${EKS_CLUSTER_NAME}' (v${EKS_KUBERNETES_VERSION})?", ok: 'Install'
                     container('terraform') {
                         echo "Applying Terraform to install EKS cluster..."
@@ -202,41 +202,48 @@ spec:
                         echo "Updating Kubeconfig for new cluster..."
                         sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
                     }
+                }
+            }
+        }
 
-                    // Upgrade EKS Cluster and Addons
-                    when { expression { params.ACTION == 'upgrade' } }
-                    script {
-                        if (params.CLUSTER_VERSION_TO_UPGRADE_TO.trim().isEmpty()) {
-                            error("CLUSTER_VERSION_TO_UPGRADE_TO parameter is required for 'upgrade' action.")
-                        }
-                    }
-                    input message: "Proceed with EKS cluster upgrade for '${EKS_CLUSTER_NAME}' to v${params.CLUSTER_VERSION_TO_UPGRADE_TO}? This will upgrade both the control plane and node group, and addons.", ok: 'Upgrade'
+        stage('Upgrade EKS Cluster and Addons') {
+        // Upgrade EKS Cluster and Addons
+        when { expression { params.ACTION == 'upgrade' } }
+        steps {
+            script {
+                if (params.CLUSTER_VERSION_TO_UPGRADE_TO.trim().isEmpty()) {
+                    error("CLUSTER_VERSION_TO_UPGRADE_TO parameter is required for 'upgrade' action.")
+                }
+                input message: "Proceed with EKS cluster upgrade for '${EKS_CLUSTER_NAME}' to v${params.CLUSTER_VERSION_TO_UPGRADE_TO}? This will upgrade both the control plane and node group, and addons.", ok: 'Upgrade'
 
-                    container('terraform') {
-                        echo "Upgrading EKS Control Plane to Kubernetes v${params.CLUSTER_VERSION_TO_UPGRADE_TO}..."
-                        // Pass the upgrade version to Terraform environment variables explicitly
-                        sh "export TF_VAR_kubernetes_version=${params.CLUSTER_VERSION_TO_UPGRADE_TO} && terraform apply -auto-approve -target=module.eks"
-                    }
+                container('terraform') {
+                    echo "Upgrading EKS Control Plane to Kubernetes v${params.CLUSTER_VERSION_TO_UPGRADE_TO}..."
+                    // Pass the upgrade version to Terraform environment variables explicitly
+                    sh "export TF_VAR_kubernetes_version=${params.CLUSTER_VERSION_TO_UPGRADE_TO} && terraform apply -auto-approve -target=module.eks"
+                }
 
-                    container('awscli-kubectl') {
-                        echo "Updating Kubeconfig for new cluster version after control plane upgrade..."
-                        sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
-                    }
+                container('awscli-kubectl') {
+                    echo "Updating Kubeconfig for new cluster version after control plane upgrade..."
+                    sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
+                }
 
-                    container('terraform') {
-                        echo "Performing Node Group Rolling Update (Blue/Green for 1 node) and upgrading addons..."
-                        // Pass the upgrade version for the node group and addons
-                        // The 'update_config' in Terraform for the node group ensures new node comes up first.
-                        sh "export TF_VAR_kubernetes_version=${params.CLUSTER_VERSION_TO_UPGRADE_TO} && terraform apply -auto-approve"
-                        echo "EKS Cluster, Node Group, and Addons upgraded successfully to v${params.CLUSTER_VERSION_TO_UPGRADE_TO}"
-                    }
+                container('terraform') {
+                    echo "Performing Node Group Rolling Update (Blue/Green for 1 node) and upgrading addons..."
+                    // Pass the upgrade version for the node group and addons
+                    // The 'update_config' in Terraform for the node group ensures new node comes up first.
+                    sh "export TF_VAR_kubernetes_version=${params.CLUSTER_VERSION_TO_UPGRADE_TO} && terraform apply -auto-approve"
+                    echo "EKS Cluster, Node Group, and Addons upgraded successfully to v${params.CLUSTER_VERSION_TO_UPGRADE_TO}"
+                }
+            }
+        }
+        }
 
-                    // Destroy EKS Cluster
-                    when { expression { params.ACTION == 'destroy' } }
-                    script {
-                        if (!params.CONFIRM_DESTROY) {
-                            error("Destroy action requires 'CONFIRM_DESTROY' to be checked.")
-                        }
+        stage('Destroy EKS Cluster') {
+            when { expression { params.ACTION == 'destroy' } }
+            steps {
+                script {
+                    if (!params.CONFIRM_DESTROY) {
+                        error("Destroy action requires 'CONFIRM_DESTROY' to be checked.")
                     }
                     input message: "ARE YOU ABSOLUTELY SURE YOU WANT TO DESTROY EKS CLUSTER '${EKS_CLUSTER_NAME}'? This is irreversible!", ok: 'Destroy'
                     container('terraform') {
@@ -251,7 +258,7 @@ spec:
             steps {
                 container('jnlp') { // Can run in any container, JNLP is fine for basic file ops
                     echo "Cleaning up workspace..."
-                    sh "rm -f tfplan" // Remove the Terraform plan file
+                    sh "rm -f tfplan || true" // Remove the Terraform plan file
                 }
             }
         }
