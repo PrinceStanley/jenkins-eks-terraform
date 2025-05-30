@@ -41,7 +41,7 @@ spec:
   serviceAccountName: default # Or a dedicated service account like 'jenkins-eks-sa'
   containers:
     - name: jnlp # Jenkins JNLP Agent
-      image: jenkins/jnlp-agent-node:latest # Or a specific version like '4.13.2-1'
+      image: jenkins/inbound-agent:latest # Or a specific version like '4.13.2-1'
       resources:
         limits:
           cpu: "1000m" # 1 CPU core
