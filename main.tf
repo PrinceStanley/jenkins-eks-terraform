@@ -1,0 +1,130 @@
+// main.tf
+
+provider "aws" {
+  region = var.aws_region
+}
+
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.this.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.this.token
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.this.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.this.token
+  }
+}
+
+terraform {
+  backend "s3" {
+    bucket         = "your-terraform-eks-state-bucket"
+    key            = "eks/my-eks-cluster-v1-30/terraform.tfstate"
+    dynamodb_table = "your-terraform-eks-state-lock"
+    region         = "ap-south-1"
+    encrypt        = true
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.30"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.23"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.11"
+    }
+  }
+}
+
+// Data sources to get existing VPC, subnets, etc.
+data "aws_vpc" "selected" {
+  id = var.existing_vpc_id
+}
+
+data "aws_subnets" "private_subnets" {
+  ids = split(",", var.existing_private_subnet_ids)
+}
+
+data "aws_security_group" "cluster_sg" {
+  count = var.existing_cluster_security_group_id != "" ? 1 : 0
+  id    = var.existing_cluster_security_group_id
+}
+
+// EKS Cluster Module
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "19.16.0" # Make sure to check the latest version supporting EKS 1.30 (might be v20+)
+
+  cluster_name    = var.cluster_name
+  cluster_version = var.kubernetes_version
+
+  vpc_id     = data.aws_vpc.selected.id
+  subnet_ids = data.aws_subnets.private_subnets.ids
+
+  cluster_security_group_ids = var.existing_cluster_security_group_id != "" ? [data.aws_security_group.cluster_sg[0].id] : []
+  
+  cluster_endpoint_private_access = true
+  # EKS Managed Node Group
+  eks_managed_node_groups = {
+    "${var.node_group_name}" = {
+      desired_capacity = 1
+      max_capacity     = 2
+      min_capacity     = 1
+      
+      launch_template {
+        id      = var.node_group_launch_template_id
+        version = var.node_group_launch_template_version
+      }
+
+      update_config = {
+        max_unavailable_percentage = 0
+        max_surge_percentage       = 100
+      }
+    }
+  }
+
+  # EKS Addons (managed by the EKS module) - now with specific versions
+  cluster_addons = {
+    coredns = {
+      resolve_conflicts = "OVERWRITE"
+      version           = var.addon_coredns_version != "" ? var.addon_coredns_version : null
+      most_recent       = var.addon_coredns_version == "" ? true : null
+    }
+    kube-proxy = {
+      resolve_conflicts = "OVERWRITE"
+      version           = var.addon_kube_proxy_version != "" ? var.addon_kube_proxy_version : null
+      most_recent       = var.addon_kube_proxy_version == "" ? true : null
+    }
+    vpc-cni = {
+      resolve_conflicts = "OVERWRITE"
+      version           = var.addon_vpc_cni_version != "" ? var.addon_vpc_cni_version : null
+      most_recent       = var.addon_vpc_cni_version == "" ? true : null
+    }
+    # EBS CSI Driver is now an EKS managed addon
+    aws-ebs-csi-driver = {
+      resolve_conflicts = "OVERWRITE"
+      version           = var.addon_ebs_csi_driver_version != "" ? var.addon_ebs_csi_driver_version : null
+      most_recent       = var.addon_ebs_csi_driver_version == "" ? true : null
+    }
+    aws-efs-csi-driver = {
+      resolve_conflicts = "OVERWRITE"
+      version           = var.addon_efs_csi_driver_version != "" ? var.addon_efs_csi_driver_version : null
+      most_recent       = var.addon_efs_csi_driver_version == "" ? true : null
+    }
+  }
+}
+
+// Data sources to get cluster endpoint and auth token for Kubernetes provider
+data "aws_eks_cluster" "this" {
+  name = module.eks.cluster_id
+}
+
+data "aws_eks_cluster_auth" "this" {
+  name = module.eks.cluster_id
+}
