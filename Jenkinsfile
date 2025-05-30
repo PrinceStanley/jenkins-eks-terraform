@@ -110,7 +110,6 @@ spec:
     }
 
     options {
-        timestamps() // Add timestamps to console output
         disableConcurrentBuilds() // Prevent multiple builds from running simultaneously
         timeout(time: 2, unit: 'HOURS') // Global pipeline timeout
     }
