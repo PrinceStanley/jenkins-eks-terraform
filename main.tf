@@ -10,20 +10,12 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.this.token
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = data.aws_eks_cluster.this.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.this.token
-  }
-}
-
 terraform {
   backend "s3" {
-    bucket         = "your-terraform-eks-state-bucket"
-    key            = "eks/my-eks-cluster-v1-30/terraform.tfstate"
-    dynamodb_table = "your-terraform-eks-state-lock"
-    region         = "ap-south-1"
+    bucket         = "n8n-sb1-bucket001"
+    key            = "eks/test-eks-upgrade-cluster/terraform.tfstate"
+    dynamodb_table = "test-eks-upgrade-lock-table"
+    region         = "us-east-1"
     encrypt        = true
   }
   required_providers {
@@ -34,10 +26,6 @@ terraform {
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "~> 2.23"
-    }
-    helm = {
-      source  = "hashicorp/helm"
-      version = "~> 2.11"
     }
   }
 }
@@ -59,7 +47,7 @@ data "aws_security_group" "cluster_sg" {
 // EKS Cluster Module
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.16.0" # Make sure to check the latest version supporting EKS 1.30 (might be v20+)
+  version = "20.36.0" # Make sure to check the latest version supporting EKS 1.30 (might be v20+)
 
   cluster_name    = var.cluster_name
   cluster_version = var.kubernetes_version
@@ -67,9 +55,10 @@ module "eks" {
   vpc_id     = data.aws_vpc.selected.id
   subnet_ids = data.aws_subnets.private_subnets.ids
 
-  cluster_security_group_ids = var.existing_cluster_security_group_id != "" ? [data.aws_security_group.cluster_sg[0].id] : []
+  cluster_security_group_id = var.existing_cluster_security_group_id != "" ? [data.aws_security_group.cluster_sg[0].id] : []
   
   cluster_endpoint_private_access = true
+
   # EKS Managed Node Group
   eks_managed_node_groups = {
     "${var.node_group_name}" = {
@@ -77,7 +66,7 @@ module "eks" {
       max_capacity     = 2
       min_capacity     = 1
       
-      launch_template {
+      launch_template = {
         id      = var.node_group_launch_template_id
         version = var.node_group_launch_template_version
       }

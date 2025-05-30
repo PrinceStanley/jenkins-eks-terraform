@@ -73,3 +73,14 @@ variable "addon_efs_csi_driver_version" {
   default     = ""
   type        = string
 }
+
+variable "node_group_launch_template_id" {
+  description = "The ID of the existing EC2 Launch Template to use for the EKS managed node group."
+  type        = string
+}
+
+variable "node_group_launch_template_version" {
+  description = "The version of the Launch Template to use. Can be '$Latest', '$Default', or a specific version number."
+  type        = string
+  default     = "2"
+}
