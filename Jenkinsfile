@@ -41,7 +41,7 @@ spec:
   serviceAccountName: default # Or a dedicated service account like 'jenkins-eks-sa'
   containers:
     - name: jnlp # Jenkins JNLP Agent
-      image: jenkins/jnlp-agent:latest # Or a specific version like '4.13.2-1'
+      image: jenkins/jnlp-agent-node:latest # Or a specific version like '4.13.2-1'
       resources:
         limits:
           cpu: "1000m" # 1 CPU core
@@ -155,7 +155,7 @@ spec:
                         echo "Cloning Terraform repository..."
                         // Replace 'your-git-repo-url' and 'your-branch' with your actual repository
                         // Use a Jenkins credential for Git if your repository is private
-                        git branch: 'main', credentialsId: 'your-git-credential-id', url: 'https://github.com/your-org/your-eks-terraform-repo.git'
+                        git branch: 'main', credentialsId: 'PrinceGithub', url: 'https://github.com/PrinceStanley/jenkins-eks-terraform.git'
                     }
                 }
             }
