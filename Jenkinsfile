@@ -12,7 +12,7 @@ def EKS_NODE_GROUP_NAME = 'test-eks-upgrade-cluster-ng' // Name of your node gro
 def EXISTING_VPC_ID = 'vpc-0e3e0e5f71c6d2dfb' // <<-- REPLACE with your existing VPC ID
 def EXISTING_PRIVATE_SUBNET_IDS = ["subnet-05c75af00f233a847", "subnet-0ee22c1cfa1d6fbb2", "subnet-01cb3b49d3b0228e2"] // <<-- REPLACE with your existing private subnet IDs (comma-separated)
 def EXISTING_CLUSTER_SECURITY_GROUP_ID = 'sg-0de38d80fa2770dd5' // <<-- REPLACE with your existing cluster security group ID (if you have one for common access, else omit or let Terraform create)
-def ADDITIONAL_SECURITY_GROUP_IDS = ["sg-04816159e114bc8e8"] // Optional additional security groups for the cluster, can be left empty if not needed
+def ADDITIONAL_CLUSTER_SECURITY_GROUP_IDS = ["sg-04816159e114bc8e8"] // Optional additional security groups for the cluster, can be left empty if not needed
 
 def ADDON_COREDNS_VERSION = 'v1.11.4-eksbuild.2' // Example version for EKS 1.30, check AWS docs for latest
 def ADDON_KUBE_PROXY_VERSION = 'v1.32.0-eksbuild.2' // Example, check AWS docs for latest
