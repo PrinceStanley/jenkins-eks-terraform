@@ -35,14 +35,14 @@ data "aws_vpc" "selected" {
   id = var.existing_vpc_id
 }
 
-data "aws_subnets" "private_subnets" {
-  ids = split(",", var.existing_private_subnet_ids)
-}
+//data "aws_subnets" "private_subnets" {
+//  ids = split(",", var.existing_private_subnet_ids)
+//}
 
-data "aws_security_group" "cluster_sg" {
-  count = var.existing_cluster_security_group_id != "" ? 1 : 0
-  id    = var.existing_cluster_security_group_id
-}
+//data "aws_security_group" "cluster_sg" {
+//  count = var.existing_cluster_security_group_id != "" ? 1 : 0
+//  id    = var.existing_cluster_security_group_id
+//}
 
 // EKS Cluster Module
 module "eks" {
@@ -53,9 +53,10 @@ module "eks" {
   cluster_version = var.kubernetes_version
 
   vpc_id     = data.aws_vpc.selected.id
-  subnet_ids = data.aws_subnets.private_subnets.ids
+  subnet_ids = var.existing_private_subnet_ids
 
-  cluster_security_group_id = var.existing_cluster_security_group_id != "" ? [data.aws_security_group.cluster_sg[0].id] : []
+  cluster_security_group_id = var.existing_cluster_security_group_id
+  cluster_additional_security_group_ids = var.cluster_additional_security_group_ids
   
   cluster_endpoint_private_access = true
 

@@ -28,19 +28,19 @@ variable "existing_vpc_id" {
 
 variable "existing_private_subnet_ids" {
   description = "Comma-separated string of existing private subnet IDs for the EKS cluster."
-  type        = string
-}
-
-variable "existing_public_subnet_ids" {
-  description = "Comma-separated string of existing public subnet IDs (for ALBs, etc.). Can be empty if not needed."
-  type        = string
-  default     = ""
+  type        = list
 }
 
 variable "existing_cluster_security_group_id" {
   description = "Optional: The ID of an existing security group to associate with the cluster control plane ENIs."
   type        = string
   default     = ""
+}
+
+variable "cluster_additional_security_group_ids" {
+  description = "Optional: Additional security group IDs to associate with the EKS cluster."
+  type        = list(string)
+  default     = []
 }
 
 # --- EKS Managed Addon Version Variables ---
