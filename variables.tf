@@ -37,8 +37,8 @@ variable "existing_cluster_security_group_id" {
   default     = ""
 }
 
-variable "cluster_additional_security_group_ids" {
-  description = "Optional: Additional security group IDs to associate with the EKS cluster."
+variable "additional_cluster_security_group_ids" {
+  description = "Comma-separated string of additional security group IDs to attach to the EKS cluster control plane."
   type        = list(string)
   default     = []
 }

@@ -12,7 +12,7 @@ def EKS_NODE_GROUP_NAME = 'test-eks-upgrade-cluster-ng' // Name of your node gro
 def EXISTING_VPC_ID = 'vpc-0e3e0e5f71c6d2dfb' // <<-- REPLACE with your existing VPC ID
 def EXISTING_PRIVATE_SUBNET_IDS = ["subnet-05c75af00f233a847", "subnet-0ee22c1cfa1d6fbb2", "subnet-01cb3b49d3b0228e2"] // <<-- REPLACE with your existing private subnet IDs (comma-separated)
 def EXISTING_CLUSTER_SECURITY_GROUP_ID = 'sg-0de38d80fa2770dd5' // <<-- REPLACE with your existing cluster security group ID (if you have one for common access, else omit or let Terraform create)
-def CLUSTER_ADDITIONAL_SECURITY_GROUP_IDS = ["sg-04816159e114bc8e8"] // Optional additional security groups for the cluster, can be left empty if not needed
+def ADDITIONAL_SECURITY_GROUP_IDS = ["sg-04816159e114bc8e8"] // Optional additional security groups for the cluster, can be left empty if not needed
 
 def ADDON_COREDNS_VERSION = 'v1.11.4-eksbuild.2' // Example version for EKS 1.30, check AWS docs for latest
 def ADDON_KUBE_PROXY_VERSION = 'v1.32.0-eksbuild.2' // Example, check AWS docs for latest
@@ -127,6 +127,7 @@ spec:
         string(name: 'EFS_CSI_DRIVER_VERSION', defaultValue: ADDON_EFS_CSI_DRIVER_VERSION, description: 'Specific version for EFS CSI Driver addon.')
         string(name: 'NODE_GROUP_LT_ID', defaultValue: NODE_GROUP_LAUNCH_TEMPLATE_ID, description: 'ID of the existing EC2 Launch Template for the node group.')
         string(name: 'NODE_GROUP_LT_VERSION', defaultValue: NODE_GROUP_LAUNCH_TEMPLATE_VERSION, description: 'Version of the Launch Template ($Latest, $Default, or specific version number).')
+        string(name: 'ADDITIONAL_CLUSTER_SG_IDS', defaultValue: ADDITIONAL_CLUSTER_SECURITY_GROUP_IDS, description: 'Comma-separated list of additional security group IDs to attach to the EKS cluster.')
     }
 
     environment {
@@ -138,7 +139,7 @@ spec:
         TF_VAR_existing_vpc_id = "${EXISTING_VPC_ID}"
         TF_VAR_existing_private_subnet_ids = "${EXISTING_PRIVATE_SUBNET_IDS}"
         TF_VAR_existing_cluster_security_group_id = "${EXISTING_CLUSTER_SECURITY_GROUP_ID}"
-        TF_VAR_cluster_additional_security_group_ids = "${CLUSTER_ADDITIONAL_SECURITY_GROUP_IDS}"
+        TF_VAR_additional_cluster_security_group_ids = "${params.ADDITIONAL_CLUSTER_SG_IDS}"
         TF_VAR_addon_coredns_version = "${params.COREDNS_ADDON_VERSION}"
         TF_VAR_addon_kube_proxy_version = "${params.KUBE_PROXY_ADDON_VERSION}"
         TF_VAR_addon_vpc_cni_version = "${params.VPC_CNI_ADDON_VERSION}"

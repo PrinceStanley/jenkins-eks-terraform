@@ -56,8 +56,8 @@ module "eks" {
   subnet_ids = var.existing_private_subnet_ids
 
   cluster_security_group_id = var.existing_cluster_security_group_id
-  cluster_additional_security_group_ids = var.cluster_additional_security_group_ids
-  
+  cluster_additional_security_group_ids = var.additional_cluster_security_group_ids
+
   cluster_endpoint_private_access = true
 
   # EKS Managed Node Group
