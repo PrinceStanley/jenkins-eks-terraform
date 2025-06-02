@@ -4,11 +4,11 @@ provider "aws" {
   region = var.aws_region
 }
 
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.this.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.this.token
-}
+//provider "kubernetes" {
+//  host                   = data.aws_eks_cluster.this.endpoint
+//  cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
+//  token                  = data.aws_eks_cluster_auth.this.token
+//}
 
 terraform {
   backend "s3" {
@@ -114,10 +114,10 @@ module "eks" {
 }
 
 // Data sources to get cluster endpoint and auth token for Kubernetes provider
-data "aws_eks_cluster" "this" {
-  name = module.eks.cluster_name
-}
+//data "aws_eks_cluster" "this" {
+//  name = module.eks.cluster_name
+//}
 
-data "aws_eks_cluster_auth" "this" {
-  name = module.eks.cluster_name
-}
+//data "aws_eks_cluster_auth" "this" {
+//  name = module.eks.cluster_name
+//}
