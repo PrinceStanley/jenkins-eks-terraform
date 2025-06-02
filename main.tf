@@ -66,9 +66,9 @@ module "eks" {
       name = var.node_group_name
 
       iam_role_arn = var.node_group_iam_role_arn
-      desired_capacity = 1
-      max_capacity     = 2
-      min_capacity     = 1
+      desired_size = 1
+      max_size     = 2
+      min_size     = 1
       
       create_launch_template = false
       use_custom_launch_template = true
