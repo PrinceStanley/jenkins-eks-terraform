@@ -127,7 +127,6 @@ spec:
         string(name: 'EFS_CSI_DRIVER_VERSION', defaultValue: ADDON_EFS_CSI_DRIVER_VERSION, description: 'Specific version for EFS CSI Driver addon.')
         string(name: 'NODE_GROUP_LT_ID', defaultValue: NODE_GROUP_LAUNCH_TEMPLATE_ID, description: 'ID of the existing EC2 Launch Template for the node group.')
         string(name: 'NODE_GROUP_LT_VERSION', defaultValue: NODE_GROUP_LAUNCH_TEMPLATE_VERSION, description: 'Version of the Launch Template ($Latest, $Default, or specific version number).')
-        string(name: 'ADDITIONAL_CLUSTER_SG_IDS', defaultValue: ADDITIONAL_CLUSTER_SECURITY_GROUP_IDS, description: 'Comma-separated list of additional security group IDs to attach to the EKS cluster.')
     }
 
     environment {
@@ -139,7 +138,7 @@ spec:
         TF_VAR_existing_vpc_id = "${EXISTING_VPC_ID}"
         TF_VAR_existing_private_subnet_ids = "${EXISTING_PRIVATE_SUBNET_IDS}"
         TF_VAR_existing_cluster_security_group_id = "${EXISTING_CLUSTER_SECURITY_GROUP_ID}"
-        TF_VAR_additional_cluster_security_group_ids = "${params.ADDITIONAL_CLUSTER_SG_IDS}"
+        TF_VAR_additional_cluster_security_group_ids = "${ADDITIONAL_CLUSTER_SECURITY_GROUP_IDS}"
         TF_VAR_addon_coredns_version = "${params.COREDNS_ADDON_VERSION}"
         TF_VAR_addon_kube_proxy_version = "${params.KUBE_PROXY_ADDON_VERSION}"
         TF_VAR_addon_vpc_cni_version = "${params.VPC_CNI_ADDON_VERSION}"
