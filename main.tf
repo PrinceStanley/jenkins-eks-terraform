@@ -63,14 +63,15 @@ module "eks" {
   # EKS Managed Node Group
   eks_managed_node_groups = {
     "${var.node_group_name}" = {
+      name = var.node_group_name
+
+      iam_role_arn = var.node_group_iam_role_arn
       desired_capacity = 1
       max_capacity     = 2
       min_capacity     = 1
       
-      launch_template = {
-        id      = var.node_group_launch_template_id
-        version = var.node_group_launch_template_version
-      }
+      launch_template_id      = var.node_group_launch_template_id
+      launch_template_version   = var.node_group_launch_template_version
 
       update_config = {
         max_unavailable_percentage = 0
@@ -83,29 +84,29 @@ module "eks" {
   cluster_addons = {
     coredns = {
       resolve_conflicts = "OVERWRITE"
-      version           = var.addon_coredns_version != "" ? var.addon_coredns_version : null
-      most_recent       = var.addon_coredns_version == "" ? true : null
+      addon_version = var.addon_coredns_version
+      most_recent = var.addon_coredns_version == "" ? true : null
     }
     kube-proxy = {
       resolve_conflicts = "OVERWRITE"
-      version           = var.addon_kube_proxy_version != "" ? var.addon_kube_proxy_version : null
-      most_recent       = var.addon_kube_proxy_version == "" ? true : null
+      addon_version = var.addon_kube_proxy_version != "" ? var.addon_kube_proxy_version : null
+      most_recent = var.addon_kube_proxy_version == "" ? true : null
     }
     vpc-cni = {
       resolve_conflicts = "OVERWRITE"
-      version           = var.addon_vpc_cni_version != "" ? var.addon_vpc_cni_version : null
-      most_recent       = var.addon_vpc_cni_version == "" ? true : null
+      addon_version = var.addon_vpc_cni_version != "" ? var.addon_vpc_cni_version : null
+      most_recent = var.addon_vpc_cni_version == "" ? true : null
     }
     # EBS CSI Driver is now an EKS managed addon
     aws-ebs-csi-driver = {
       resolve_conflicts = "OVERWRITE"
-      version           = var.addon_ebs_csi_driver_version != "" ? var.addon_ebs_csi_driver_version : null
-      most_recent       = var.addon_ebs_csi_driver_version == "" ? true : null
+      addon_version = var.addon_ebs_csi_driver_version != "" ? var.addon_ebs_csi_driver_version : null
+      most_recent = var.addon_ebs_csi_driver_version == "" ? true : null
     }
     aws-efs-csi-driver = {
       resolve_conflicts = "OVERWRITE"
-      version           = var.addon_efs_csi_driver_version != "" ? var.addon_efs_csi_driver_version : null
-      most_recent       = var.addon_efs_csi_driver_version == "" ? true : null
+      addon_version = var.addon_efs_csi_driver_version != "" ? var.addon_efs_csi_driver_version : null
+      most_recent = var.addon_efs_csi_driver_version == "" ? true : null
     }
   }
 }

@@ -85,3 +85,9 @@ variable "node_group_launch_template_version" {
   type        = string
   default     = "2"
 }
+
+variable "node_group_iam_role_arn" {
+  description = "The ARN of the IAM role to use for the EKS managed node group."
+  type        = string  
+  default     = "" 
+}

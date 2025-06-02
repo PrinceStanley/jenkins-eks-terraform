@@ -22,7 +22,7 @@ def ADDON_EFS_CSI_DRIVER_VERSION = 'v2.1.4-eksbuild.1' // Example, check AWS doc
 
 def NODE_GROUP_LAUNCH_TEMPLATE_ID = 'lt-0a614edd658f028f5' // <<-- REPLACE with your existing Launch Template ID
 def NODE_GROUP_LAUNCH_TEMPLATE_VERSION = '2' // <<-- REPLACE with specific version, or '$Latest', '$Default'
-
+def NODE_GROUP_IAM_ROLE_ARN = 'arn:aws:iam::828692096705:role/exl-uc-devops-eks-cluster-ng-role' // <<-- REPLACE with your existing IAM role ARN for the node group
 
 
 pipeline {
@@ -146,6 +146,7 @@ spec:
         TF_VAR_addon_efs_csi_driver_version = "${params.EFS_CSI_DRIVER_VERSION}"
         TF_VAR_node_group_launch_template_id = "${params.NODE_GROUP_LT_ID}"
         TF_VAR_node_group_launch_template_version = "${params.NODE_GROUP_LT_VERSION}"
+        TF_VAR_node_group_iam_role_arn = "${NODE_GROUP_IAM_ROLE_ARN}"
     }
 
     stages {
