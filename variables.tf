@@ -28,7 +28,8 @@ variable "existing_vpc_id" {
 
 variable "existing_private_subnet_ids" {
   description = "Comma-separated string of existing private subnet IDs for the EKS cluster."
-  type        = list
+  type        = list(string)
+  default     = []
 }
 
 variable "existing_cluster_security_group_id" {
