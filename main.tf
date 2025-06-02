@@ -70,6 +70,8 @@ module "eks" {
       max_capacity     = 2
       min_capacity     = 1
       
+      create_launch_template = false
+      use_custom_launch_template = true
       launch_template_id      = var.node_group_launch_template_id
       launch_template_version   = var.node_group_launch_template_version
 
