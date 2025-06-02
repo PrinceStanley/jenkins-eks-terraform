@@ -115,9 +115,9 @@ module "eks" {
 
 // Data sources to get cluster endpoint and auth token for Kubernetes provider
 data "aws_eks_cluster" "this" {
-  name = module.eks.cluster_id
+  name = module.eks.cluster_name
 }
 
 data "aws_eks_cluster_auth" "this" {
-  name = module.eks.cluster_id
+  name = module.eks.cluster_name
 }
