@@ -74,7 +74,7 @@ module "eks" {
       launch_template_version   = var.node_group_launch_template_version
 
       update_config = {
-        max_unavailable_percentage = 0
+        max_unavailable_percentage = 1
         max_surge_percentage       = 100
       }
     }
