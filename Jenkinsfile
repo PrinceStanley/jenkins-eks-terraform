@@ -202,7 +202,7 @@ spec:
                     }
                     container('awscli-kubectl') { // Use awscli-kubectl for AWS CLI commands
                         echo "Updating Kubeconfig for new cluster..."
-                        sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
+                        sh "KUBECONFIG=/home/jenkins/.kube/config aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
                     }
                 }
             }
@@ -226,7 +226,7 @@ spec:
 
                 container('awscli-kubectl') {
                     echo "Updating Kubeconfig for new cluster version after control plane upgrade..."
-                    sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
+                    sh "KUBECONFIG=/home/jenkins/.kube/config aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
                 }
 
                 container('terraform') {
