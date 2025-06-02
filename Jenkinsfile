@@ -7,7 +7,7 @@ def TF_STATE_BUCKET = 'n8n-sb1-bucket001' // Replace with your S3 bucket name
 def TF_STATE_LOCK_TABLE = 'test-eks-upgrade-lock-table' // Replace with your DynamoDB table name
 def EKS_CLUSTER_NAME = 'test-eks-upgrade-cluster' // Name of your EKS cluster
 def EKS_KUBERNETES_VERSION = '1.30' // Target EKS Kubernetes version
-def EKS_NODE_GROUP_NAME = 'test-eks-upgrade-cluster-ng' // Name of your node group for the cluster
+def EKS_NODE_GROUP_NAME = 'tst-eksupgdclstr-ng' // Name of your node group for the cluster
 
 def EXISTING_VPC_ID = 'vpc-0e3e0e5f71c6d2dfb' // <<-- REPLACE with your existing VPC ID
 def EXISTING_PRIVATE_SUBNET_IDS = '["subnet-05c75af00f233a847", "subnet-0ee22c1cfa1d6fbb2", "subnet-01cb3b49d3b0228e2"]' // <<-- REPLACE with your existing private subnet IDs (comma-separated)

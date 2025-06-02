@@ -89,23 +89,23 @@ module "eks" {
     }
     kube-proxy = {
       resolve_conflicts = "OVERWRITE"
-      addon_version = var.addon_kube_proxy_version != "" ? var.addon_kube_proxy_version : null
+      addon_version = var.addon_kube_proxy_version
       most_recent = var.addon_kube_proxy_version == "" ? true : null
     }
     vpc-cni = {
       resolve_conflicts = "OVERWRITE"
-      addon_version = var.addon_vpc_cni_version != "" ? var.addon_vpc_cni_version : null
+      addon_version = var.addon_vpc_cni_version
       most_recent = var.addon_vpc_cni_version == "" ? true : null
     }
     # EBS CSI Driver is now an EKS managed addon
     aws-ebs-csi-driver = {
       resolve_conflicts = "OVERWRITE"
-      addon_version = var.addon_ebs_csi_driver_version != "" ? var.addon_ebs_csi_driver_version : null
+      addon_version = var.addon_ebs_csi_driver_version
       most_recent = var.addon_ebs_csi_driver_version == "" ? true : null
     }
     aws-efs-csi-driver = {
       resolve_conflicts = "OVERWRITE"
-      addon_version = var.addon_efs_csi_driver_version != "" ? var.addon_efs_csi_driver_version : null
+      addon_version = var.addon_efs_csi_driver_version
       most_recent = var.addon_efs_csi_driver_version == "" ? true : null
     }
   }
