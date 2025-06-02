@@ -64,14 +64,15 @@ module "eks" {
   eks_managed_node_groups = {
     "${var.node_group_name}" = {
       name = var.node_group_name
-
+      
+      create_iam_role = false
       iam_role_arn = var.node_group_iam_role_arn
       desired_size = 1
       max_size     = 2
       min_size     = 1
       
       create_launch_template = false
-      use_custom_launch_template = true
+      use_custom_launch_template = true  
       launch_template_id      = var.node_group_launch_template_id
       launch_template_version   = var.node_group_launch_template_version
 
